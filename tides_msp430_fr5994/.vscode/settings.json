@@ -1,0 +1,8 @@
+{
+    "C_Cpp.default.compilerPath": "/Applications/ti/ccs1040/ccs/tools/compiler/msp430-gcc-9.3.1.11_macos/bin",
+    "files.associations": {
+        "apps.h": "c",
+        "stdint.h": "c",
+        "msp430.h": "c"
+    }
+}
