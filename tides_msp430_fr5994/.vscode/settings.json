@@ -3,6 +3,21 @@
     "files.associations": {
         "apps.h": "c",
         "stdint.h": "c",
-        "msp430.h": "c"
-    }
+        "msp430.h": "c",
+        "main.h": "c",
+        "scheduler.h": "c",
+        "task.h": "c",
+        "config.h": "c",
+        "memory_mapping.h": "c",
+        "buffer_manager.h": "c",
+        "sram_checker.h": "c",
+        "checkpointing.h": "c",
+        "profile.h": "c",
+        "string.h": "c"
+    },
+    "cSpell.words": [
+        "Inited",
+        "taskfun",
+        "Vlid"
+    ]
 }

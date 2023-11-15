@@ -11,7 +11,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "task.h"
-#include "sram_checker.h"
 #include "checkpointing.h"
 
 extern bool nvInited;

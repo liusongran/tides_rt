@@ -81,7 +81,7 @@ TASK(task_inner_loop){ //-(2), R[1-P,2,3] || W[1-P,3]. NOTE: size-[0,203]
 }
 
 TASK(task_finish){ //-(3)
-    if(__GET(iteration)>400){
+    if(__GET(iteration)>20){
         NEXT(0);
     }else{
         NEXT(1);

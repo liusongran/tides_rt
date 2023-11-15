@@ -1,6 +1,6 @@
-#include <apps.h>
 #include <main.h> 
 #include "scheduler.h"
+
 /**
  * main.c
  */
@@ -11,7 +11,9 @@ int main(void){
         if(!nvInited){
             _benchmark_sort_init();
         }
-        __scheduler_run();          //kick-off run-time system.
+
+        //kick-off run-time system.
+        __scheduler_run();
     }
     return 0;
 }
