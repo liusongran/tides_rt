@@ -1,0 +1,17 @@
+{
+    "files.associations": {
+        "sram_checker.h": "c",
+        "checkpointing.h": "c",
+        "memory_mapping.h": "c",
+        "buffer_manager.h": "c",
+        "task.h": "c",
+        "scheduler.h": "c",
+        "config.h": "c"
+    },
+    "cSpell.words": [
+        "dlist",
+        "Inited",
+        "taskfun",
+        "Vlid"
+    ]
+}
