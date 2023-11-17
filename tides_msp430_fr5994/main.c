@@ -6,7 +6,9 @@
  */
 int main(void){
     __mcu_init();
+    pf_timerA1Init();
 
+    printf("teststssssttt.\r\n");
     while(1){
         if(!nvInited){
             _benchmark_sort_init();

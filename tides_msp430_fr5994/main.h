@@ -14,34 +14,30 @@
 #include <msp430.h>
 #include "profile.h"
 
+
 static void __cs_init(){
-    CSCTL0_H    = CSKEY >> 8;                                   // Unlock CS registers
-    CSCTL1      = DCOFSEL_6;                          // Set DCO to 1 MHz
-    CSCTL2 = SELA__LFXTCLK | SELS__DCOCLK | SELM__DCOCLK;   // Set SMCLK = MCLK = DCO, ACLK = VLOCLK
-    CSCTL3      = DIVA__1 | DIVS__1 | DIVM__1;                  // Set all dividers
-    CSCTL0_H    = 0;                                            // Lock CS registers
+    CS_setDCOFreq(CS_DCORSEL_1, CS_DCOFSEL_4);      //Set DCO frequency to 16MHz
+    /**
+     * Configure one FRAM waitstate as required by the device datasheet for MCLK
+     * operation beyond 8MHz _before_ configuring the clock system.
+     */
+    FRCTL0 = FRCTLPW | AUTO_1;
+
+    CS_initClockSignal(CS_MCLK,CS_DCOCLK_SELECT,CS_CLOCK_DIVIDER_1);
+    CS_initClockSignal(CS_SMCLK,CS_DCOCLK_SELECT,CS_CLOCK_DIVIDER_1);
+    CS_initClockSignal(CS_ACLK,CS_LFXTCLK_SELECT,CS_CLOCK_DIVIDER_1);
 }
 
 void __mcu_init(){
-    //Stop watchdog
-    WDTCTL = WDTPW | WDTHOLD;
-    
-    //Clock system       
-    __cs_init();                    
+    WDTCTL = WDTPW | WDTHOLD;       //Stop watchdog.
+    PM5CTL0 &= ~LOCKLPM5;           //Disable the GPIO power-on default high-impedance mode.
 
-    //Zero FRAM wait states for 1 MHz operation
-    FRCTL0 = FRCTLPW | NWAITS_0;
-    
-    //Disable the GPIO power-on default high-impedance mode.
-    PM5CTL0 &= ~LOCKLPM5;
-
-    //Set LED
     P1DIR = 0x3F;                   //0b-0011 1111
     P1OUT = 0x00;
     __delay_cycles(10);
     P1OUT = 0b010011;               //Set P1.4, Turn both LEDs on
-    pf_timerA1Init();
-    pf_uartInit();
+
+    __cs_init();                    //Clock system
 }
 
 #endif /* MAIN_H_ */

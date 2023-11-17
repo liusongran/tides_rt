@@ -12,13 +12,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <cs.h>
+#include <eusci_a_uart.h>
 #include "config.h"
 #include "memory_mapping.h"
 
-#define UART_TXD_PORT   2
-#define UART_TXD_PIN    (0x0001)
-#define UART_RXD_PORT   2
-#define UART_RXD_PIN    (0x0002)
 
 extern uint16_t verifyStart     ;
 extern uint16_t verifyEnd       ;
@@ -55,16 +53,29 @@ extern uint16_t ckpNvmEnd       ;
 extern uint16_t ckpNvmCnt       ;
 extern uint64_t ckpNvmSum       ;
 
+#define UART_TXD_PORT        2
+#define UART_TXD_PIN         (0x0001)
+
+#define UART_RXD_PORT        2
+#define UART_RXD_PIN         (0x0002)
 
 void pf_timerA1Init();
 void pf_varReset();
 void pf_uartInit();
 
+int fputc(int _c, register FILE *_fp);
+int fputs(const char *_ptr, register FILE *_fp);
+
+/*
+ * [timerA1Start]: 
+ */
 inline uint16_t timerA1Start() {
     TA1CTL |= MC_2;         // 设置计时器 A1 为连续模式以开始计数
     return TA1R;            // 返回当前的计数值
 }
-
+/*
+ * [timerA1Stop]: 
+ */
 inline uint16_t timerA1Stop() {
     uint16_t count = TA1R;  // 获取当前计数值
     TA1CTL |= MC_0;         // 停止计时器 A1

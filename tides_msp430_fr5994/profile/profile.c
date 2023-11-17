@@ -43,6 +43,24 @@ __nv uint16_t ckpNvmCnt         = 0;
 __nv uint64_t ckpNvmSum         = 0;
 
 
+int fputc(int _c, register FILE *_fp){
+    EUSCI_A_UART_transmitData(EUSCI_A0_BASE, (unsigned char) _c );
+    return((unsigned char)_c);
+}
+
+int fputs(const char *_ptr, register FILE *_fp){
+    unsigned int i, len;
+
+    len = strlen(_ptr);
+
+    for(i=0 ; i<len ; i++){
+    EUSCI_A_UART_transmitData(EUSCI_A0_BASE, (unsigned char) _ptr[i]);
+    }
+
+    return len;
+}
+
+
 void pf_timerA1Init(){
     TA1CTL = TASSEL__SMCLK + MC_2 + TACLR + ID__4;
 }
@@ -65,20 +83,6 @@ void pf_uartInit() {
 
     // 启动 UART 功能
     UCA1CTLW0 &= ~UCSWRST;
-}
-
-int uart_putchar(int c) {
-    while (!(UCA1IFG & UCTXIFG));              // 等待发送缓冲区准备好
-    UCA1TXBUF = (unsigned char) c;             // 发送字符
-    return c;
-}
-
-int _write(int fd, const void *buf, size_t count) {
-    size_t i;
-    for (i = 0; i < count; i++) {
-        uart_putchar(((const char *)buf)[i]);
-    }
-    return count;
 }
 
 
