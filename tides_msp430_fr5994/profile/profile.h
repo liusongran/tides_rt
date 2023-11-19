@@ -18,40 +18,40 @@
 #include "memory_mapping.h"
 
 
-extern uint16_t verifyStart     ;
-extern uint16_t verifyEnd       ;
-extern uint16_t verifyCnt       ;
-extern uint64_t verifySum       ;
+extern uint16_t verifyStart;
+extern uint16_t verifyEnd;
+extern uint16_t verifyCnt;
+extern uint64_t verifySum;
 
 extern uint16_t restoreSramStart;
-extern uint16_t restoreSramEnd  ;
-extern uint16_t restoreSramCnt  ;
-extern uint64_t restoreSramSum  ;
+extern uint16_t restoreSramEnd;
+extern uint16_t restoreSramCnt;
+extern uint64_t restoreSramSum;
 
-extern uint16_t restoreNvmStart ;
-extern uint16_t restoreNvmEnd   ;
-extern uint16_t restoreNvmCnt   ;
-extern uint64_t restoreNvmSum   ;
+extern uint16_t restoreNvmStart;
+extern uint16_t restoreNvmEnd;
+extern uint16_t restoreNvmCnt;
+extern uint64_t restoreNvmSum;
 
-extern uint16_t execStart       ;
-extern uint16_t execEnd         ;
-extern uint16_t execCnt         ;
-extern uint64_t execSum         ;
+extern uint16_t execStart;
+extern uint16_t execEnd;
+extern uint16_t execCnt;
+extern uint64_t execSum;
 
-extern uint16_t cksumStart      ;
-extern uint16_t cksumEnd        ;
-extern uint16_t cksumCnt        ;
-extern uint64_t cksumSum        ;
+extern uint16_t cksumStart;
+extern uint16_t cksumEnd;
+extern uint16_t cksumCnt;
+extern uint64_t cksumSum;
 
-extern uint16_t ckpSramStart    ;
-extern uint16_t ckpSramEnd      ;
-extern uint16_t ckpSramCnt      ;
-extern uint64_t ckpSramSum      ;
+extern uint16_t ckpSramStart;
+extern uint16_t ckpSramEnd;
+extern uint16_t ckpSramCnt;
+extern uint64_t ckpSramSum;
 
-extern uint16_t ckpNvmStart     ;
-extern uint16_t ckpNvmEnd       ;
-extern uint16_t ckpNvmCnt       ;
-extern uint64_t ckpNvmSum       ;
+extern uint16_t ckpNvmStart;
+extern uint16_t ckpNvmEnd;
+extern uint16_t ckpNvmCnt;
+extern uint64_t ckpNvmSum;
 
 #define UART_TXD_PORT        2
 #define UART_TXD_PIN         (0x0001)

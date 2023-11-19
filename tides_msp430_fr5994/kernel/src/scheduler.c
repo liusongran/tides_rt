@@ -26,29 +26,13 @@ void __scheduler_run(){
     svTrigOnRecd = 0;
     svVerifiedBmp = 0;
     while(1){
-        //NOTE: Verify & Restore
-        if(nvInited){ // 1: been init.ed
-            if(!tFlagPassVlid){
-PRB_START(verify)
-                tResult = __sc_verify(nvCurrTaskID);
-PRB_END(verify)
-                if(tResult == VERIFY_FAILED){
+        //NOTE: restore
+        if(nvInited){
 PRB_START(restoreNvm)
-                    __ckp_restore_nvm();
+            __ckp_restore_INK();
 PRB_END(restoreNvm)
-                    tFlagPassVlid = 1;
-                }else{
-PRB_START(restoreSram)
-                    __ckp_restore_sram();
-PRB_END(restoreSram)
-                }
-            }else{
-PRB_START(restoreSram)
-                __ckp_restore_sram();
-PRB_END(restoreSram)
-            }
         }
-        
+
         if(!nvInited || svResetFlag){
             svResetFlag = 0;
             __ckp_init_bufs();
@@ -59,27 +43,13 @@ PRB_START(exec)
         tTaskID = (uint8_t)((taskfun_t)(_threads[0].task_array[nvCurrTaskID].fun_entry))(_threads[0].buffer.sram_bufs[svBufIdx._idx]);
 PRB_END(exec)
 
-        //NOTE: Checksum
-        if(nvInited){
-PRB_START(cksum)
-            __sc_checksum(nvCurrTaskID);
-PRB_END(cksum)
-        }else{
-PRB_START(cksum)
-            __sc_first_cksum();
-PRB_END(cksum)
+        //NOTE: commit
+PRB_START(ckpNvm)
+        __ckp_commit_INK(tTaskID);
+PRB_END(ckpNvm)
+        if(!nvInited){
             nvInited = 1;
         }
-
-        //NOTE: sram checkpointing
-PRB_START(ckpSram)
-        __ckp_commit_sram(tTaskID);
-PRB_END(ckpSram)
-
-        //NOTE: trigger nvm checkpointing
-PRB_START(ckpNvm)
-        __ckp_check_cond_and_commit(tTaskID);
-PRB_END(ckpNvm)
 
         if(nvCurrTaskID==0){
             svResetFlag = 1;

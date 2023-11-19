@@ -23,7 +23,9 @@ extern uint16_t svTrigOnRecd;
 
 void __ckp_restore_sram();
 void __ckp_restore_nvm();
+void __ckp_restore_INK();
 void __ckp_commit_sram(uint8_t tempTaskID);
+void __ckp_commit_INK(uint8_t tempTaskID);
 void __ckp_init_bufs();
 void __ckp_check_cond_and_commit(uint8_t tTaskID);
 

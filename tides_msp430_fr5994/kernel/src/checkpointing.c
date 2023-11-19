@@ -118,6 +118,18 @@ inline void _ckp_commit_nvm(uint8_t tempTaskID){
 }
 
 /* ----------------
+ * [__ckp_commit_INK]: done!!!
+ * LOG: use to commit changes to backup buffer.
+ */
+void __ckp_commit_INK(uint8_t tempTaskID){
+    //FIXME: disable interrupt
+    nvBufIdx._idx   = nvBufIdx._idx ^ 1;
+    nvBufIdx.idx    = nvBufIdx.idx ^ 1;
+    nvCurrTaskID    = tempTaskID;
+    //FIXME: enable interrupt
+}
+
+/* ----------------
  * [__ckp_init_bufs]:
  * LOG: use to init all buffers to '0'.
  */
@@ -143,3 +155,17 @@ void __ckp_check_cond_and_commit(uint8_t tempTaskID){
     }
 }
 
+/* ----------------
+ * [__ckp_restore_INK]: done!!!
+ * LOG: use to prepare working buffer by restoring states from SRAM buffer (aka, backup buffer) to working buffer.
+ * 1. shared data
+ * 2. checksum lists
+ * 3. checksum node pool bitmaps
+ */
+void __ckp_restore_INK(){
+    //global data.  backup-->working
+    buffer_t *buffer = &_threads[0].buffer;
+    _dma_word_copy( (unsigned int)buffer->nvm_bufs[nvBufIdx.idx],  \
+                    (unsigned int)buffer->nvm_bufs[nvBufIdx._idx], \
+                    nvBufSize>>1);
+}
