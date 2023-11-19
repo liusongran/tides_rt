@@ -258,9 +258,9 @@ SECTIONS
     PROVIDE (__persistent_start = .);
     *(.persistent)
     . = ALIGN(2);
-	*(.nvm_vars)
-	. = ALIGN(2);
-	*(.sram_vars)
+	  *(.nvm_vars)
+    . = ALIGN(2);
+    *(.nvm_bufs)
     . = ALIGN(2);
     PROVIDE (__persistent_end = .);
   } > FRAM
@@ -294,7 +294,7 @@ SECTIONS
     . = ALIGN(2);
     *(.sdata .sdata.* .gnu.linkonce.s.* D_2 D_1)
 
-    . = ALIGN(2);
+	  . = ALIGN(2);
 
     _edata = .;
     PROVIDE (edata = .);
@@ -324,6 +324,15 @@ SECTIONS
     . = ALIGN(2);
     PROVIDE (__bssstart = .);
     *(.lower.bss.* .lower.bss)
+  } > RAM
+
+  .sram_vars :
+  {
+    . = ALIGN(2);
+	  *(.sram_vars)
+    . = ALIGN(2);
+    *(.sram_bufs)
+    . = ALIGN(2);
   } > RAM
 
   .bss :
