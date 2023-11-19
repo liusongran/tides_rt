@@ -40,7 +40,7 @@ PRB_END(restoreNvm)
 
         //NOTE: Execution
 PRB_START(exec)
-        tTaskID = (uint8_t)((taskfun_t)(_threads[0].task_array[nvCurrTaskID].fun_entry))(_threads[0].buffer.sram_bufs[nvBufIdx._idx]);
+        tTaskID = (uint8_t)((taskfun_t)(_threads[0].task_array[nvCurrTaskID].fun_entry))(_threads[0].buffer.nvm_bufs[nvBufIdx._idx]);
 PRB_END(exec)
 
         //NOTE: commit
