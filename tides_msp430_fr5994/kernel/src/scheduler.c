@@ -8,7 +8,7 @@
 #include "scheduler.h"
 #include "profile.h"
 
-__nv bool nvInited = 0;         // 0: not init.ed; 1: been init.ed
+__nv bool     nvInited = 0;         // 0: not init.ed; 1: been init.ed
 __nv uint16_t nvBgtRemained = 10;   //Budget remained to do a NVM ckp, replenish with a default value
 __nv uint16_t nvCurrTaskID = 0;
 __nv uint16_t nvCurrTaskIDShadow[2] = {0,0};
@@ -19,7 +19,7 @@ __sv uint16_t svRoundCnter = 0;
  * [__scheduler_run]: 
  */
 void __scheduler_run(){
-    bool tFlagPassVlid = 0; //0-Do not pass validation; 1-pass validation.
+    bool tFlagPassVlid = 0;         //0-Do not pass validation; 1-pass validation.
     bool tResult = 0;
     uint16_t tTaskID;
 
@@ -48,7 +48,7 @@ PRB_START(restoreSram)
 PRB_END(restoreSram)
             }
         }
-        
+
         if(!nvInited || svResetFlag){
             svResetFlag = 0;
             __ckp_init_bufs();
