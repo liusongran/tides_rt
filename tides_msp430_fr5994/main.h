@@ -22,7 +22,7 @@ static void __cs_init(){
      * operation beyond 8MHz _before_ configuring the clock system.
      */
     //FRCTL0 = FRCTLPW | AUTO_1;
-    FRCTL0 = FRCTLPW | AUTO_0 | NWAITS_3;
+    FRCTL0 = FRCTLPW | AUTO_0 | NWAITS_8;
     //FRCTL0 = FRCTLPW | AUTO_0;
 
     CS_initClockSignal(CS_MCLK,CS_DCOCLK_SELECT,CS_CLOCK_DIVIDER_1);

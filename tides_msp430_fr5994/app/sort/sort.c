@@ -20,7 +20,7 @@ __shared(
     uint32_t iteration;             //-[1]:4
     uint16_t inner_idx;             //-[2]:2
     uint16_t outer_idx;             //-[3]:2
-    uint16_t array[LENGTH];         //-[4]:400
+    uint16_t array[LENGTH];         //-[4]:200
 );
 
 uint16_t in_i, in_j, arr_i, arr_j;
@@ -103,7 +103,7 @@ TASK(task_finish){ //-(3)   NOTE: size-[0,3]
 void _benchmark_sort_init(){
     __THREAD(0);
     TASK_INIT(0, task_setup,        0,      3);     //NOTE: size-[0,3]
-    TASK_INIT(0, task_init,         0,      407);   //NOTE: size-[0,407]
-    TASK_INIT(0, task_inner_loop,   4,      407);   //NOTE: size-[4,407]
+    TASK_INIT(0, task_init,         0,      207);   //NOTE: size-[0,407]
+    TASK_INIT(0, task_inner_loop,   4,      207);   //NOTE: size-[4,407]
     TASK_INIT(0, task_finish,       0,      3);     //NOTE: size-[0,3]
 }
