@@ -7,10 +7,10 @@
 #include "checkpointing.h"
 #include "sram_checker.h"
 #include "task.h"
+#include "profile.h"
 
 __nv buffer_idx_t   nvBufIdx = {0,1}; 
 __sv buffer_idx_t   svBufIdx = {0,1};
-__nv uint16_t       nvTrigCond;
 __sv uint16_t       svTrigOnRecd;
 __nv uint16_t       nvTotalCksum;
 extern sc_list_t    nvDualList[2];          //backup & working
@@ -90,31 +90,32 @@ void __ckp_restore_nvm(){
  * LOG: use to commit changes to backup buffer.
  */
 void __ckp_commit_sram(uint8_t tempTaskID){
-    //FIXME: disable interrupt
+    __bic_SR_register(GIE);         // disable
     svBufIdx._idx   = svBufIdx._idx ^ 1;
     svBufIdx.idx    = svBufIdx.idx ^ 1;
     nvCurrTaskID    = tempTaskID;
-    //FIXME: enable interrupt
+    __bis_SR_register(GIE);         // enable
 }
 
 /* ----------------
  * [_ckp_commit_nvm]: done!!!
  * LOG: use to commit changes to persistent buffer.
  */
-inline void _ckp_commit_nvm(uint8_t tempTaskID){
-    //FIXME: disable interrupt
+__nv uint16_t nvCnterNVM = 0;
+void _ckp_commit_nvm(uint8_t tempTaskID){
+    __bic_SR_register(GIE);         // disable
+
     // backup --> shadow
     buffer_t *buffer    = &_threads[0].buffer;
     _dma_word_copy( (unsigned int)buffer->sram_bufs[svBufIdx.idx],  \
                     (unsigned int)buffer->nvm_bufs[nvBufIdx._idx],  \
                     nvBufSize>>1);
+    nvCurrTaskIDShadow[nvBufIdx._idx] = tempTaskID;
     nvBufIdx._idx = nvBufIdx._idx ^ 1;
     nvBufIdx.idx  = nvBufIdx.idx ^ 1;
-    nvTrigCond    = 0;
     nvTotalCksum  = __sc_cksum_total();
-    nvCurrTaskIDShadow[nvBufIdx._idx] = tempTaskID;
-    
-    //FIXME: enable interrupt
+    nvCnterNVM ++;
+    __bis_SR_register(GIE);         // enable
 }
 
 /* ----------------
@@ -133,13 +134,58 @@ void __ckp_init_bufs(){
  * [__ckp_check_cond_and_commit]: 
  * LOG: use to init all buffers to '0'.
  */
+__nv uint8_t nvRandomArray[200] = {
+    13, 21, 49, 97, 38, 28, 43, 76, 91, 18,
+    21, 76, 6, 67, 43, 49, 86, 22, 68, 71,
+    58, 91, 3, 27, 100, 57, 85, 63, 22, 5,
+    50, 99, 92, 57, 95, 73, 18, 6, 58, 29,
+    46, 43, 69, 57, 46, 31, 54, 96, 75, 4,
+    57, 39, 68, 84, 52, 17, 1, 73, 51, 84,
+    36, 18, 31, 62, 50, 78, 62, 17, 21, 67,
+    94, 74, 53, 60, 74, 57, 65, 68, 98, 4,
+    72, 54, 35, 71, 25, 9, 45, 99, 3, 50,
+    68, 81, 70, 32, 16, 45, 66, 16, 74, 17,
+    25, 77, 38, 1, 81, 23, 94, 56, 40, 17,
+    12, 84, 69, 27, 46, 41, 26, 34, 21, 78,
+    42, 56, 28, 4, 96, 10, 41, 99, 74, 49,
+    58, 20, 51, 36, 15, 64, 84, 87, 85, 58,
+    83, 88, 95, 48, 76, 80, 100, 41, 45, 74,
+    19, 94, 29, 13, 51, 75, 96, 60, 19, 59,
+    22, 68, 50, 44, 42, 1, 10, 18, 96, 59,
+    92, 69, 82, 40, 26, 88, 1, 65, 85, 11,
+    95, 24, 92, 76, 49, 48, 13, 83, 45, 11,
+    48, 41, 41, 15, 87, 42, 46, 56, 56, 63
+};
+
+extern uint32_t nvTotalTaskCnt;
+extern uint16_t nvRoundTaskRcd;
 void __ckp_check_cond_and_commit(uint8_t tempTaskID){
+    uint8_t tRdmVar;
     svTrigOnRecd ++;
     if(svTrigOnRecd == ON_TASK_CNTER){
-        nvTrigCond ++;
-        if(nvTrigCond == OFF_POWER_CNTER){
+        tRdmVar = nvRandomArray[nvTotalTaskCnt%200];
+        if (tRdmVar<10) {
             _ckp_commit_nvm(tempTaskID);
         }
     }
 }
 
+/**
+void __ckp_check_cond_and_commit(uint8_t tempTaskID){
+    uint16_t tRdmVar;
+    uint16_t tRdmStart=0;
+    uint16_t tRdmEnd;
+    svTrigOnRecd ++;
+    tRdmEnd = timerA1Stop();
+    //uart_printf("|svTrigOnRecd:%d\r\n", svTrigOnRecd);
+    if(svTrigOnRecd == ON_TASK_CNTER){
+        srand(tRdmEnd-tRdmStart);
+        tRdmVar = rand()%100;
+        uart_printf("|tRdmVar:%d\r\n", tRdmVar);
+        if (tRdmVar<10) {
+            _ckp_commit_nvm(tempTaskID);
+        }
+    }
+    tRdmStart = timerA1Start();
+}
+*/

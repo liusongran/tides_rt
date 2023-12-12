@@ -1,7 +1,10 @@
 #include <task.h>
 #include <apps.h>
 #include "./sort.h"
+#include "profile.h"
 
+#define SRT_ITERATION       10     
+#define SRT_ROUND_SIZE      20
 /*
  * 1. TASK declaration
  */
@@ -14,26 +17,25 @@ TASK(task_finish);                  //-(3)
  * 2. Shared variable declaration (206 bytes)
  */
 __shared(
-    uint16_t iteration;             //-[1]:2
+    uint32_t iteration;             //-[1]:4
     uint16_t inner_idx;             //-[2]:2
     uint16_t outer_idx;             //-[3]:2
-    uint16_t array[LENGTH];         //-[4]:200
+    uint16_t array[LENGTH];         //-[4]:400
 );
 
 uint16_t in_i, in_j, arr_i, arr_j;
 /*
  * 3. TASK definition
  */
-TASK(task_setup){ //-(0)
+TASK(task_setup){ //-(0)    NOTE: size-[0,3]
     __SET(iteration) = 0;
     NEXT(1);
 }
 
-TASK(task_init){ //-(1), R[4] || W[1,2,3,4]. NOTE: size-[0,205]
+TASK(task_init){ //-(1), R[4] || W[1,2,3,4]. NOTE: size-[0,407]
     __SET(outer_idx) = 0;
     __SET(inner_idx) = 1;
     ++__SET(iteration);
-
     const uint16_t* array_pt;
 
     if(__GET(iteration) & 0x01){
@@ -50,11 +52,11 @@ TASK(task_init){ //-(1), R[4] || W[1,2,3,4]. NOTE: size-[0,205]
     NEXT(2);
 }
 
-TASK(task_inner_loop){ //-(2), R[1-P,2,3] || W[1-P,3]. NOTE: size-[0,203]
+TASK(task_inner_loop){ //-(2), R[1-P,2,3] || W[1-P,3]. NOTE: size-[4,407]
     uint16_t i, j, x_i, x_j, temp;
     uint16_t x_k;
 
-    for(x_k=0; x_k<500; x_k++){
+    for(x_k=0; x_k<300; x_k++){
         i = __GET(outer_idx);
         j = __GET(inner_idx);
 
@@ -80,10 +82,17 @@ TASK(task_inner_loop){ //-(2), R[1-P,2,3] || W[1-P,3]. NOTE: size-[0,203]
     NEXT(2);
 }
 
-TASK(task_finish){ //-(3)
-    if(__GET(iteration)>20){
+TASK(task_finish){ //-(3)   NOTE: size-[0,3]
+    //uart_printf("||iteration:%d.\r\n", __GET(iteration));
+
+    if(__GET(iteration)>(SRT_ITERATION*SRT_ROUND_SIZE)){
         NEXT(0);
     }else{
+        if ((__GET(iteration)>=SRT_ROUND_SIZE) && (__GET(iteration)%SRT_ROUND_SIZE==0)) {
+            P1OUT |= 0b00000100;
+            __delay_cycles(100);
+            P1OUT &= ~0b00000100;
+        }
         NEXT(1);
     }
 }
@@ -93,8 +102,8 @@ TASK(task_finish){ //-(3)
  */
 void _benchmark_sort_init(){
     __THREAD(0);
-    TASK_INIT(0, task_setup,        0,      9);
-    TASK_INIT(0, task_init,         0,      99);   //0 - [0,205]
-    TASK_INIT(0, task_inner_loop,   50,     149);   //1 - [0,203]
-    TASK_INIT(0, task_finish,       0,      205);     //3 - [0,0]
+    TASK_INIT(0, task_setup,        0,      3);     //NOTE: size-[0,3]
+    TASK_INIT(0, task_init,         0,      407);   //NOTE: size-[0,407]
+    TASK_INIT(0, task_inner_loop,   4,      407);   //NOTE: size-[4,407]
+    TASK_INIT(0, task_finish,       0,      3);     //NOTE: size-[0,3]
 }

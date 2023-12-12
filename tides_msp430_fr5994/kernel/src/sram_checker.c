@@ -125,6 +125,7 @@ void _sc_partial_crc_upper(uint8_t nodeIdx, uint8_t bufIdx, uint16_t addrMiddle)
  * 3. update verified-flag
  * 4. return results
  */
+extern bool pf_flag_long;
 bool __sc_verify(uint16_t taskID){
     bool tFlagSearched = 0;
     bool tResult = 0;
@@ -172,6 +173,11 @@ bool __sc_verify(uint16_t taskID){
         }else{
             tNextNodeIdx = nvDualList[tBufIdxBackup].stElkList[tNextNodeIdx].nextNode;
         }
+    }
+    //tResult = VERIFY_PASSED;
+    if (pf_flag_long) {
+        tResult = VERIFY_FAILED;
+        pf_flag_long = 0;
     }
     return tResult;
 }

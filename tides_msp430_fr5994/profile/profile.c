@@ -5,6 +5,7 @@
  *      Author: liusongran
  */
 
+#include <stdarg.h>
 #include "profile.h"
 
 __nv uint16_t verifyStart       = 0;
@@ -48,6 +49,9 @@ int fputc(int _c, register FILE *_fp){
     return((unsigned char)_c);
 }
 
+
+
+
 int fputs(const char *_ptr, register FILE *_fp){
     unsigned int i, len;
 
@@ -63,26 +67,91 @@ int fputs(const char *_ptr, register FILE *_fp){
 
 void pf_timerA1Init(){
     TA1CTL = TASSEL__SMCLK + MC_2 + TACLR + ID__4;
+    TA1CCTL0 &= ~CCIE;
+    TA1CCTL1 &= ~CCIE;
+    TA1CCTL2 &= ~CCIE;
+    TA1CTL &= ~TAIE;
 }
 
+
+/* Initializes Backchannel UART GPIO */
+void pf_uartGpioInit()
+{
+    // Configure P2.0 - UCA0TXD and P2.1 - UCA0RXD
+    GPIO_setOutputLowOnPin(UART_TXD_PORT, UART_TXD_PIN);
+    GPIO_setAsOutputPin(UART_TXD_PORT, UART_TXD_PIN);
+    /* Selecting UART functions for TXD and RXD */
+    GPIO_setAsPeripheralModuleFunctionInputPin(
+            UART_TXD_PORT,
+            UART_TXD_PIN,
+			UART_SELECT_FUNCTION);
+
+    GPIO_setAsPeripheralModuleFunctionInputPin(
+            UART_RXD_PORT,
+            UART_RXD_PIN,
+			UART_SELECT_FUNCTION);
+}
+
+/* UART Configuration Parameter. These are the configuration parameters to
+ * make the eUSCI A UART module to operate with a 115200 baud rate. These
+ * values were calculated using the online calculator that TI provides
+ * at:
+ *http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
+ */
+EUSCI_A_UART_initParam uartParam =
+{
+        EUSCI_A_UART_CLOCKSOURCE_SMCLK,                 // SMCLK Clock Source
+		8,                                              // BRDIV = 4
+        10,                                              // UCxBRF = 5
+        247,                                             // UCxBRS = 85
+        EUSCI_A_UART_NO_PARITY,                         // No Parity
+        EUSCI_A_UART_LSB_FIRST,                         // LSB First
+        EUSCI_A_UART_ONE_STOP_BIT,                      // One stop bit
+        EUSCI_A_UART_MODE,                              // UART mode
+        EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION   // Oversampling
+};
+
 void pf_uartInit() {
-    // 关闭 UART 功能，准备进行配置
-    UCA1CTLW0 |= UCSWRST;
-    
-    // 设置 SMCLK 为 UART 时钟源
-    UCA1CTLW0 |= UCSSEL__SMCLK;
-    
-    // 设置波特率为 115200，SMCLK = 16MHz
-    // 这些值来自于 MSP430 16MHz 时钟波特率配置表
-    UCA1BRW = 8;                              // 16MHz 115200
-    UCA1MCTLW |= UCOS16 | UCBRF_10 | 0xF700;  // 波特率调制控制设置
+    /* Configuring UART Module */
+    EUSCI_A_UART_init(EUSCI_A0_BASE, &uartParam);
 
-    // 配置 Tx 和 Rx 引脚功能选择
-    P2SEL0 &= ~(UART_TXD_PIN | UART_RXD_PIN);
-    P2SEL1 |= (UART_TXD_PIN | UART_RXD_PIN);
+    EUSCI_A_UART_disableInterrupt(EUSCI_A0_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT | EUSCI_A_UART_TRANSMIT_INTERRUPT);
+    /* Enable UART module */
+    EUSCI_A_UART_enable(EUSCI_A0_BASE);
+}
 
-    // 启动 UART 功能
-    UCA1CTLW0 &= ~UCSWRST;
+/* Transmits String over UART */
+void UART_transmitString( char *pStr )
+{
+	while( *pStr )
+	{
+		EUSCI_A_UART_transmitData(EUSCI_A0_BASE, *pStr );
+		pStr++;
+	}
+}
+
+int _write(int file, char *ptr, int len) {
+    size_t i;
+
+    if (file == STDOUT_FILENO || file == STDERR_FILENO) {
+        for (i = 0; i < len; i++) {
+            EUSCI_A_UART_transmitData(EUSCI_A0_BASE, ptr[i]);
+        }
+        return len;
+    }
+    return -1;
+}
+
+
+void uart_printf(const char *format, ...) {
+    char buffer[512];
+    va_list args;
+
+    va_start(args, format);
+    vsnprintf(buffer, 512, format, args);
+    va_end(args);
+
+    UART_transmitString(buffer);
 }
 
 

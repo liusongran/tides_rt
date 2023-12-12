@@ -14,6 +14,7 @@
 #include <string.h>
 #include <cs.h>
 #include <eusci_a_uart.h>
+#include <gpio.h>
 #include "config.h"
 #include "memory_mapping.h"
 
@@ -53,19 +54,32 @@ extern uint16_t ckpNvmEnd       ;
 extern uint16_t ckpNvmCnt       ;
 extern uint64_t ckpNvmSum       ;
 
-#define UART_TXD_PORT        2
-#define UART_TXD_PIN         (0x0001)
-
-#define UART_RXD_PORT        2
-#define UART_RXD_PIN         (0x0002)
-
-void pf_timerA1Init();
 void pf_varReset();
-void pf_uartInit();
 
+/**
+ * eUSCI A Init.
+ */
+#define UART_TXD_PORT       2
+#define UART_TXD_PIN        (0x0001)
+#define UART_RXD_PORT       2
+#define UART_RXD_PIN        (0x0002)
+#define UART_SELECT_FUNCTION (0x02)
+
+void pf_uartInit();
+void pf_uartGpioInit();
+void UART_transmitString( char *pStr );
+
+
+#ifndef STDOUT_FILENO
+#define STDOUT_FILENO 1
+#endif
+
+#ifndef STDERR_FILENO
+#define STDERR_FILENO 2
+#endif
 int fputc(int _c, register FILE *_fp);
 int fputs(const char *_ptr, register FILE *_fp);
-
+int _write(int file, char *ptr, int len);
 /*
  * [timerA1Start]: 
  */
@@ -82,7 +96,8 @@ inline uint16_t timerA1Stop() {
     TA1CTL |= TACLR;        // 清除计时器 A1，计数值归零
     return count;           // 返回停止时的计数值
 }
-
+void pf_timerA1Init();
+void uart_printf(const char *format, ...);
 
 #if (PROFILE_ENABLED == P_TRUE)
 #define PRB_START(var)  var##Start = timerA1Start();

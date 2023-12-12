@@ -14,10 +14,9 @@
 #include "buffer_manager.h"
 
 
-#define ON_TASK_CNTER   5       //FIXME: put in config.h, record finished TASK number in each power-on round 
+#define ON_TASK_CNTER   10       //FIXME: put in config.h, record finished TASK number in each power-on round
 #define OFF_POWER_CNTER 1       //FIXME: this value should change with power traces, trigger when to NVM ckp
 
-extern uint16_t nvTrigCond;
 extern uint16_t svTrigOnRecd;
 
 

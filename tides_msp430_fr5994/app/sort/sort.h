@@ -9,7 +9,7 @@
 #define APPS_SORT_SORT_H_
 #include <stdint.h>
 
-#define LENGTH 100
+#define LENGTH 200
 
 /**--------------
  * AB time cost:

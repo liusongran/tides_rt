@@ -19,6 +19,6 @@
 #define MAX_SUB_CKSUM_NUM   5
 #define MAX_CKSUM_TAB_NUM   128
 
-#define SIMU_ITERATION      20
+#define SIMU_ITERATION      10
 
 #endif /* KERNEL_INC_CONFIG_H_ */

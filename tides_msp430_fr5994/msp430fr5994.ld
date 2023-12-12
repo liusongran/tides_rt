@@ -40,7 +40,8 @@ ENTRY(_start)
 MEMORY {
   TINYRAM          : ORIGIN = 0x000A, LENGTH = 0x0016 /* END=0x001F, size 22 */
   BSL              : ORIGIN = 0x1000, LENGTH = 0x0800 /* END=0x17FF, size 2048 */
-  RAM              : ORIGIN = 0x1C00, LENGTH = 0x1000 /* END=0x2BFF, size 4096 */
+  RAM_TIDES        : ORIGIN = 0x1C00, LENGTH = 0x0400 /* END=0x1FFF, size 1024 */
+  RAM              : ORIGIN = 0x2000, LENGTH = 0x0C00 /* END=0x2BFF, size 3072 */
   LEARAM           : ORIGIN = 0x2C00, LENGTH = 0x0EC8 /* END=0x3AC7, size 3784 */
   LEASTACK         : ORIGIN = 0x3AC8, LENGTH = 0x0138 /* END=0x3BFF, size 312 */
   INFOMEM          : ORIGIN = 0x1800, LENGTH = 0x0200 /* END=0x19FF, size 512 as 4 128-byte segments */
@@ -333,7 +334,7 @@ SECTIONS
     . = ALIGN(2);
     *(.sram_bufs)
     . = ALIGN(2);
-  } > RAM
+  } > RAM_TIDES
 
   .bss :
   {
@@ -401,6 +402,8 @@ SECTIONS
   {
     . = ALIGN(2);
     *(.lower.text.* .lower.text)
+    . = ALIGN(2);
+    *(.lowtext)
   } > FRAM
 
   .text :
