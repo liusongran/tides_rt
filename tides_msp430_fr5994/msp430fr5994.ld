@@ -261,9 +261,9 @@ SECTIONS
     . = ALIGN(2);
 	  *(.nvm_vars)
     . = ALIGN(2);
-    *(.sram_vars)
-    . = ALIGN(2);
     *(.nvm_bufs)
+    . = ALIGN(2);
+    *(.sram_vars)
     . = ALIGN(2);
     PROVIDE (__persistent_end = .);
   } > FRAM
