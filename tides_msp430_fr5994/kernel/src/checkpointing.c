@@ -102,11 +102,11 @@ void __ckp_commit_sram(uint8_t tempTaskID){
  * LOG: use to commit changes to backup buffer.
  */
 void __ckp_commit_INK(uint8_t tempTaskID){
-    //FIXME: disable interrupt
+    __bic_SR_register(GIE);         // disable
     nvBufIdx._idx   = nvBufIdx._idx ^ 1;
     nvBufIdx.idx    = nvBufIdx.idx ^ 1;
     nvCurrTaskID    = tempTaskID;
-    //FIXME: enable interrupt
+    __bis_SR_register(GIE);         // enable
 }
 
 /* ----------------

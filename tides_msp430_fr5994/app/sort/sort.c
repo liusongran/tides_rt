@@ -3,6 +3,16 @@
 #include "./sort.h"
 #include "profile.h"
 
+/**
+ * ---------------------------------------
+ * InK:
+ * - FRCTL0 = FRCTLPW | AUTO_0 | NWAITS_13;
+ * - SRT_ITERATION      10   
+ * - SRT_ROUND_SIZE     20  
+ * - LENGTH             100
+ * - x_k<200
+ * ---------------------------------------
+ */
 #define SRT_ITERATION       10     
 #define SRT_ROUND_SIZE      20
 /*
