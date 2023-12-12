@@ -56,7 +56,7 @@ TASK(task_inner_loop){ //-(2), R[1-P,2,3] || W[1-P,3]. NOTE: size-[4,407]
     uint16_t i, j, x_i, x_j, temp;
     uint16_t x_k;
 
-    for(x_k=0; x_k<300; x_k++){
+    for(x_k=0; x_k<200; x_k++){
         i = __GET(outer_idx);
         j = __GET(inner_idx);
 

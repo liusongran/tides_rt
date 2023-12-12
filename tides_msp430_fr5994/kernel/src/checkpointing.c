@@ -182,6 +182,22 @@ void __ckp_check_cond_and_commit(uint8_t tempTaskID){
     }
 }
 
+/* ----------------
+ * [__ckp_restore_INK]: done!!!
+ * LOG: use to prepare working buffer by restoring states from SRAM buffer (aka, backup buffer) to working buffer.
+ * 1. shared data
+ * 2. checksum lists
+ * 3. checksum node pool bitmaps
+ */
+void __ckp_restore_INK(){
+    //global data.  backup-->working
+    buffer_t *buffer = &_threads[0].buffer;
+    _dma_word_copy( (unsigned int)buffer->nvm_bufs[nvBufIdx.idx],  \
+                    (unsigned int)buffer->nvm_bufs[nvBufIdx._idx], \
+                    nvBufSize>>1);
+}
+
+
 /**
 void __ckp_check_cond_and_commit(uint8_t tempTaskID){
     uint16_t tRdmVar;

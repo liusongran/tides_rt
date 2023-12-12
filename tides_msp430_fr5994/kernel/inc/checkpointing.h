@@ -26,5 +26,6 @@ void __ckp_commit_sram(uint8_t tempTaskID);
 void __ckp_commit_INK(uint8_t tempTaskID);
 void __ckp_init_bufs();
 void __ckp_check_cond_and_commit(uint8_t tTaskID);
+void __ckp_restore_INK();
 
 #endif /* KERNEL_INC_CHECKPOINTING_H_ */
