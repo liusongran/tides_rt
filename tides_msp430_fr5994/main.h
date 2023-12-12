@@ -21,7 +21,8 @@ static void __cs_init(){
      * Configure one FRAM waitstate as required by the device datasheet for MCLK
      * operation beyond 8MHz _before_ configuring the clock system.
      */
-    FRCTL0 = FRCTLPW | AUTO_1;
+    //FRCTL0 = FRCTLPW | AUTO_1;
+    FRCTL0 = FRCTLPW | AUTO_0 | NWAITS_8;
 
     CS_initClockSignal(CS_MCLK,CS_DCOCLK_SELECT,CS_CLOCK_DIVIDER_1);
     CS_initClockSignal(CS_SMCLK,CS_DCOCLK_SELECT,CS_CLOCK_DIVIDER_1);
