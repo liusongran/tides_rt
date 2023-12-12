@@ -98,6 +98,18 @@ void __ckp_commit_sram(uint8_t tempTaskID){
 }
 
 /* ----------------
+ * [__ckp_commit_INK]: done!!!
+ * LOG: use to commit changes to backup buffer.
+ */
+void __ckp_commit_INK(uint8_t tempTaskID){
+    //FIXME: disable interrupt
+    nvBufIdx._idx   = nvBufIdx._idx ^ 1;
+    nvBufIdx.idx    = nvBufIdx.idx ^ 1;
+    nvCurrTaskID    = tempTaskID;
+    //FIXME: enable interrupt
+}
+
+/* ----------------
  * [_ckp_commit_nvm]: done!!!
  * LOG: use to commit changes to persistent buffer.
  */
