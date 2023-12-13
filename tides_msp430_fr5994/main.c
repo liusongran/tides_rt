@@ -15,26 +15,13 @@ int main(void){
     pf_timerA1Init();
     //pf_uartGpioInit();
     //pf_uartInit();
-    __simulator_init();
+    //__simulator_init();
 
-    //__delay_cycles(100);
-    //UART_transmitString("test\r\n");
-    /*
-    uart_printf("|pf_num_P35:%lu\r\n", pf_num_P35);
-    uart_printf("|pf_num_P82:%lu\r\n", pf_num_P82);
-    uart_printf("|pf_num_P83:%lu\r\n", pf_num_P83);
-    uart_printf("|pf_very_start:%d\r\n", pf_very_start);
-    P1DIR |= 0x02;
-    P1OUT |= 0x02;
-    __delay_cycles(10000000);
-    P1OUT &= ~(0x02);
-    */
 
     //while(!pf_very_start);
 
     while(1){
         if(!nvInited){
-            //uart_printf("_benchmark_sort_init()\r\n");
             _benchmark_sort_init();
         }
         //kick-off run-time system.
@@ -67,13 +54,14 @@ void Port_8(void) {
         // short power-off @P8.2
         pf_num_P82++;       // counter++
         P8IFG &= ~BIT2;     // clear flag
-        //main();
+        __sc_checksum_total();
         WDTCTL = 0;
     }
 
     if (P8IFG & BIT3) {
         // long power-off @P8.3
         pf_num_P83++;       // counter++
+        __sc_checksum_total();
         pf_flag_long = 1;
         P8IFG &= ~BIT3;     // clear flag
         WDTCTL = 0;

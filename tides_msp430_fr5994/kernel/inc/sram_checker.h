@@ -93,5 +93,7 @@ bool __sc_verify(uint16_t taskID);
 void __sc_first_cksum();
 void __sc_checksum(uint8_t taskID);
 uint16_t __sc_cksum_total();
+bool __sc_verify_total();
+void __sc_checksum_total();
 
 #endif /* KERNEL_INC_SRAM_CHECKER_H_ */

@@ -182,6 +182,40 @@ bool __sc_verify(uint16_t taskID){
     return tResult;
 }
 
+/* ---------------
+ * [__sc_verify_total]: done!!!
+ */
+
+extern bool pf_flag_long;
+extern uint16_t nvTotalCksum;
+bool __sc_verify_total(){
+    bool tResult = 0;
+    uint16_t tCksum = 0;
+    int i = 0;
+    for (i=0; i<64; i++) {
+        tCksum  += _sc_crc(i*128, (i+1)*128-1, 0x1C00+i*128, 0);
+    }
+    if (nvTotalCksum==tCksum) {
+        tResult = VERIFY_PASSED;
+    }else{
+        tResult = VERIFY_PASSED;
+    }
+    if (pf_flag_long) {
+        tResult = VERIFY_FAILED;
+        pf_flag_long = 0;
+    }
+    return tResult;
+}
+
+void __sc_checksum_total(){
+    uint16_t tCksum = 0;
+    int i = 0;
+    for (i=0; i<64; i++) {
+        tCksum  += _sc_crc(i*128, (i+1)*128-1, 0x1C00+i*128, 0);
+    }
+    nvTotalCksum = tCksum;
+}
+
 /* --------------------
  * [__elk_first_cksum]: done!!!
  * LOG: the very first checksum of global variables as a whole to list node nvListNodePool[0].

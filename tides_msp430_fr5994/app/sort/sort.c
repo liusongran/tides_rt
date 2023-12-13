@@ -84,6 +84,7 @@ TASK(task_inner_loop){ //-(2), R[1-P,2,3] || W[1-P,3]. NOTE: size-[4,407]
 
 TASK(task_finish){ //-(3)   NOTE: size-[0,3]
     //uart_printf("||iteration:%d.\r\n", __GET(iteration));
+    //uart_printf("||inner_idx:%d.\r\n", __GET(inner_idx));
 
     if(__GET(iteration)>(SRT_ITERATION*SRT_ROUND_SIZE)){
         NEXT(0);
