@@ -3,7 +3,7 @@
 #include "./sort.h"
 #include "profile.h"
 
-#define SRT_ITERATION       10     
+#define SRT_ITERATION       20
 #define SRT_ROUND_SIZE      20
 /*
  * 1. TASK declaration

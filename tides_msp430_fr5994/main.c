@@ -30,7 +30,7 @@ int main(void){
     P1OUT &= ~(0x02);
     */
 
-    //while(!pf_very_start);
+    while(!pf_very_start);
 
     while(1){
         if(!nvInited){
