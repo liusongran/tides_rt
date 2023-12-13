@@ -60,16 +60,15 @@ PRB_END(verify)
 PRB_START(exec)
         nvTotalTaskCnt++;
         tTaskID = (uint8_t)((taskfun_t)(_threads[0].task_array[nvCurrTaskID].fun_entry))(_threads[0].buffer.sram_bufs[svBufIdx.idx]);
-        //__bic_SR_register(GIE);  // 关闭全局中断
+        __bic_SR_register(GIE);         // 关闭全局中断
         nvCurrTaskID = tTaskID;
-        //__bis_SR_register(GIE);  // 开启全局中断
+        __bis_SR_register(GIE);         // 开启全局中断
 PRB_END(exec)
 
-        //uart_printf("|--->|nvCurrTaskID:%d |.\r\n", nvCurrTaskID);
         if(nvCurrTaskID==0){
-            __bic_SR_register(GIE);  // 关闭全局中断
+            __bic_SR_register(GIE);     // 关闭全局中断
 
-            P1OUT = 0b00000110;       // send signal to show we have done!
+            P1OUT = 0b00000110;         // send signal to show we have done!
             __delay_cycles(16000000);
             pf_uartGpioInit();
             pf_uartInit();
@@ -84,12 +83,12 @@ PRB_END(exec)
             uart_printf("|ckpNvmSum:%lu(100us)\r\n",        (uint32_t)(ckpNvmSum)/1600);
             uart_printf("|------>>>---->>>----.\r\n");
             while(1){
-                P1OUT ^= BIT0;  // blink 1.0
+                P1OUT ^= BIT0;          // blink 1.0
                 __delay_cycles(3200000);
             }
 
             svTrigOnRecd = 0;
-            __bis_SR_register(GIE);  // 开启全局中断
+            __bis_SR_register(GIE);     // 开启全局中断
         }
     }
 }

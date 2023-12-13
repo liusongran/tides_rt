@@ -17,7 +17,6 @@ int main(void){
     //pf_uartInit();
     //__simulator_init();
 
-
     //while(!pf_very_start);
 
     while(1){
