@@ -30,7 +30,7 @@ int main(void){
     P1OUT &= ~(0x02);
     */
 
-    //while(!pf_very_start);
+    while(!pf_very_start);
 
     while(1){
         if(!nvInited){
@@ -67,7 +67,6 @@ void Port_8(void) {
         // short power-off @P8.2
         pf_num_P82++;       // counter++
         P8IFG &= ~BIT2;     // clear flag
-        //main();
         WDTCTL = 0;
     }
 
