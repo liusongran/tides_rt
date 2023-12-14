@@ -52,7 +52,7 @@ void Port_3(void) {
         // very start @P3.5
         pf_num_P35 ++;      // counter++
         pf_very_start = 1;  // setup flag to show benchmark program starts to run
-        P1OUT |= 0x02;
+        //P1OUT |= 0x02;
         P3IFG &= ~BIT5;     // clear flag
     }
 }
