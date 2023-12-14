@@ -81,7 +81,6 @@ PRB_END(restoreSram)
         //uart_printf("exe(%d)\r\n",nvCurrTaskID);
 PRB_START(exec)
         nvTotalTaskCnt++;
-        //nvRoundTaskCnt++;
         tTaskID = (uint8_t)((taskfun_t)(_threads[0].task_array[nvCurrTaskID].fun_entry))(_threads[0].buffer.sram_bufs[svBufIdx._idx]);
 PRB_END(exec)
 
@@ -104,7 +103,7 @@ PRB_END(ckpSram)
 
         //NOTE: trigger nvm checkpointing
 PRB_START(ckpNvm)
-        //__ckp_check_cond_and_commit(tTaskID);
+        __ckp_check_cond_and_commit(tTaskID);
 PRB_END(ckpNvm)
 
         if(nvCurrTaskID==0){
