@@ -30,9 +30,15 @@ __nv uint32_t nvTotalTaskCnt = 0;
 //__nv uint16_t nvRoundTaskRcd = 0;
 extern uint16_t nvCnterNVM;
 
+__nv uint16_t sshort_num = 0;
+__nv uint16_t llong_num = 0;
+
+
 /*
  * [__scheduler_run]: 
  */
+//extern uint32_t pf_num_P83 = 0;
+//extern uint32_t pf_num_P82 = 0;
 void __scheduler_run(){
     bool tFlagPassVlid = 0;         //0-Do not pass validation; 1-pass validation.
     bool tResult = 0;
@@ -57,13 +63,16 @@ PRB_END(verify)
             }
         }
 //NOTE: Execution
+        __bic_SR_register(GIE);         // 关闭全局中断
 PRB_START(exec)
         nvTotalTaskCnt++;
         tTaskID = (uint8_t)((taskfun_t)(_threads[0].task_array[nvCurrTaskID].fun_entry))(_threads[0].buffer.sram_bufs[svBufIdx.idx]);
-        __bic_SR_register(GIE);         // 关闭全局中断
         nvCurrTaskID = tTaskID;
-        __bis_SR_register(GIE);         // 开启全局中断
 PRB_END(exec)
+        __bis_SR_register(GIE);         // 开启全局中断
+        if(!nvInited){
+            nvInited = 1;
+        }
 
         if(nvCurrTaskID==0){
             __bic_SR_register(GIE);     // 关闭全局中断
@@ -72,7 +81,7 @@ PRB_END(exec)
             __delay_cycles(16000000);
             pf_uartGpioInit();
             pf_uartInit();
-            uart_printf("|--->|Total Cnt:%lu |APP num:%d.\r\n", nvTotalTaskCnt, execCnt);
+            uart_printf("|--->|Total Cnt:%lu |short num:%d | long num:%d.\r\n", nvTotalTaskCnt, sshort_num, llong_num);
             uart_printf("|--->|NVM Commit num:%d.\r\n",     nvCnterNVM);
             uart_printf("|VerifySum:%lu(100us)\r\n",        (uint32_t)(verifySum)/1600);
             uart_printf("|RestoreSramSum:%lu(100us)\r\n",   (uint32_t)(restoreSramSum)/1600);

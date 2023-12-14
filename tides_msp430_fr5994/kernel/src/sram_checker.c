@@ -192,8 +192,11 @@ bool __sc_verify_total(){
     bool tResult = 0;
     uint16_t tCksum = 0;
     int i = 0;
-    for (i=0; i<64; i++) {
-        tCksum  += _sc_crc(i*128, (i+1)*128-1, 0x1C00+i*128, 0);
+    int j = 0;
+    for (j=0; j<4; j++){
+        for (i=0; i<192; i++) {
+            tCksum  += _sc_crc(i*32, (i+1)*32-1, 0x1C00+i*32, 0);
+        }
     }
     if (nvTotalCksum==tCksum) {
         tResult = VERIFY_PASSED;
@@ -210,8 +213,11 @@ bool __sc_verify_total(){
 void __sc_checksum_total(){
     uint16_t tCksum = 0;
     int i = 0;
-    for (i=0; i<64; i++) {
-        tCksum  += _sc_crc(i*128, (i+1)*128-1, 0x1C00+i*128, 0);
+    int j = 0;
+    for (j=0; j<4; j++){
+        for (i=0; i<192; i++) {
+            tCksum  += _sc_crc(i*32, (i+1)*32-1, 0x1C00+i*32, 0);
+        }
     }
     nvTotalCksum = tCksum;
 }

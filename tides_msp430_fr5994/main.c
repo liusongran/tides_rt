@@ -7,6 +7,8 @@ __nv uint32_t pf_num_P35 = 0;
 __nv uint32_t pf_num_P82 = 0;
 __nv uint32_t pf_num_P83 = 0;
 
+extern  uint16_t sshort_num;
+extern  uint16_t llong_num;
 /**
  * main.c
  */
@@ -15,9 +17,26 @@ int main(void){
     pf_timerA1Init();
     //pf_uartGpioInit();
     //pf_uartInit();
-    //__simulator_init();
+    __simulator_init();
 
-    //while(!pf_very_start);
+    while(!pf_very_start);
+
+    /*
+    int i = 0, j=0;
+    for (i=0;i<10;i++){
+        for (j=0;j<100;j++){
+            __sc_checksum_total();
+        }
+        P1OUT |= 0b00000100;
+        __delay_cycles(100);
+        P1OUT &= ~0b00000100;
+    }*/
+
+
+
+
+
+    //while(1);
 
     while(1){
         if(!nvInited){
@@ -51,16 +70,23 @@ __attribute__((interrupt(PORT8_VECTOR)))
 void Port_8(void) {
     if (P8IFG & BIT2) {
         // short power-off @P8.2
-        pf_num_P82++;       // counter++
+        //pf_num_P82++;       // counter++
+        sshort_num++;
         P8IFG &= ~BIT2;     // clear flag
+
+PRB_START(cksum)
         __sc_checksum_total();
+PRB_END(cksum)
         WDTCTL = 0;
     }
 
     if (P8IFG & BIT3) {
         // long power-off @P8.3
-        pf_num_P83++;       // counter++
+        //pf_num_P83++;       // counter++
+        llong_num++;
+PRB_START(cksum)
         __sc_checksum_total();
+PRB_END(cksum)
         pf_flag_long = 1;
         P8IFG &= ~BIT3;     // clear flag
         WDTCTL = 0;
