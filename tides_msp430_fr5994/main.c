@@ -31,6 +31,20 @@ int main(void){
     */
 
     while(!pf_very_start);
+/*
+    int i=0,j=0;
+    for(i=0;i<100;i++){
+        for(j=0;j<1000;j++){
+            PRB_START(verify)
+            PRB_END(verify)
+        }
+        P1OUT |= 0b00000100;
+        __delay_cycles(200);
+        P1OUT &= ~0b00000100;
+    }
+
+    while(1);
+*/
 
     while(1){
         if(!nvInited){

@@ -104,7 +104,7 @@ PRB_END(ckpSram)
 
         //NOTE: trigger nvm checkpointing
 PRB_START(ckpNvm)
-        __ckp_check_cond_and_commit(tTaskID);
+        //__ckp_check_cond_and_commit(tTaskID);
 PRB_END(ckpNvm)
 
         if(nvCurrTaskID==0){
